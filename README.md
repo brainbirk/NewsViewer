@@ -1,0 +1,2 @@
+# NewsViewer
+MVVM Sample project
