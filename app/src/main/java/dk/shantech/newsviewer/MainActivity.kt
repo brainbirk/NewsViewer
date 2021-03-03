@@ -8,8 +8,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import dk.shantech.newsviewer.ui.main.MainFragment
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
 //    private val navController by lazy {

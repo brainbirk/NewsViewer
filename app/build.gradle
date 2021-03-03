@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlinx-serialization'
 }
 
 android {
@@ -21,8 +22,15 @@ android {
 
     buildTypes {
         release {
+            buildConfigField "String", "API_URL", "\"https://newsapi.org/\""
+            buildConfigField "String", "API_KEY", "\"c21dcc6e5b594e01a27ba644e9f50cb8\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            buildConfigField "String", "API_URL", "\"https://newsapi.org/\""
+            buildConfigField "String", "API_KEY", "\"c21dcc6e5b594e01a27ba644e9f50cb8\""
         }
     }
     compileOptions {
@@ -53,6 +61,17 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
+
+    // OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+
+    // serialization
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
