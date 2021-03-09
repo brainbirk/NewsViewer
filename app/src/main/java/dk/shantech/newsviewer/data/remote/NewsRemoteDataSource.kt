@@ -1,28 +1,78 @@
 package dk.shantech.newsviewer.data.remote
 
-import android.util.Log
 import dk.shantech.newsviewer.data.model.ArticleList
+import dk.shantech.newsviewer.data.model.ArticleSourceList
 import dk.shantech.newsviewer.data.model.ErrorResponse
+import dk.shantech.newsviewer.data.model.Result
 import retrofit2.Response
 import retrofit2.Retrofit
-import javax.inject.Inject
-import dk.shantech.newsviewer.data.model.Result
 import java.io.IOException
+import javax.inject.Inject
 
 class NewsRemoteDataSource @Inject constructor(private val retrofit: Retrofit) {
 
-    suspend fun fetchNews(): Result<ArticleList> {
+    suspend fun fetchNews(query: String = "",
+                          qInTitle: String = "",
+                          sources: String = "",
+                          domains: String = "",
+                          excludeDomains: String = "",
+                          from: String = "",
+                          to: String = "",
+                          language: String = "",
+                          sortBy: String = "",
+                          pageSize: Int = 100,
+                          page: Int = 1
+    ): Result<ArticleList> {
         val newsService = retrofit.create(NewsService::class.java)
         return getResponse(
-            request = { newsService.getAllNews() },
-            defaultErrorMessage = "Error fetching Movie Description")
+            request = { newsService.getAllNews(
+                query = query,
+                qInTitle = qInTitle,
+                sources = sources,
+                domains = domains,
+                excludeDomains = excludeDomains,
+                from = from,
+                to = to,
+                language = language,
+                sortBy = sortBy,
+                pageSize = pageSize,
+                page = page
+            ) },
+            defaultErrorMessage = "Error fetching News")
     }
 
-    suspend fun searchNews(query:String): Result<ArticleList> {
+    suspend fun fetchTopHeadlines(country: String = "",
+                                  category: String = "",
+                                  sources: String = "",
+                                  query: String = "",
+                                  pageSize: Int = 20,
+                                  page: Int = 1
+    ): Result<ArticleList> {
         val newsService = retrofit.create(NewsService::class.java)
         return getResponse(
-            request = { newsService.getSearchNews(query = query) },
-            defaultErrorMessage = "Error fetching Movie Description")
+            request = { newsService.getHeadlines(
+                country = country,
+                category = category,
+                sources = sources,
+                query = query,
+                pageSize = pageSize,
+                page = page
+            ) },
+            defaultErrorMessage = "Error fetching Headlines")
+    }
+
+    suspend fun fetchSources(category: String = "",
+                             language: String = "",
+                             country: String = ""
+    ): Result<ArticleSourceList> {
+        val newsService = retrofit.create(NewsService::class.java)
+        return getResponse(
+            request = { newsService.getSources(
+                category = category,
+                language = language,
+                country = country
+            ) },
+            defaultErrorMessage = "Error fetching News sources")
     }
 
 
@@ -33,13 +83,10 @@ class NewsRemoteDataSource @Inject constructor(private val retrofit: Retrofit) {
             if (result.isSuccessful) {
                 return Result.success(result.body())
             } else {
-                Log.d("Here", "getResponse: result: ${result.errorBody()}")
                 val errorResponse = parseError(result, retrofit)
-                Log.d("Here", "getResponse: errorResponse: $errorResponse")
                 Result.error(errorResponse?.message?: defaultErrorMessage, errorResponse)
             }
         } catch (e: Throwable) {
-            Log.e("Here", "getResponse: Error", e)
             Result.error("Unknown Error", null)
         }
     }
