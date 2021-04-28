@@ -17,7 +17,7 @@ class NewsRepository @Inject constructor(private val newsRemoteDataSource: NewsR
         }
     }
 
-    suspend fun fetchTopHeadlines(): Flow<Result<ArticleList>?> {
+    suspend fun fetchTopHeadlines(): Flow<Result<ArticleList>> {
         return flow {
             emit(Result.loading())
             val result = newsRemoteDataSource.fetchTopHeadlines(country = "gb")

@@ -1,14 +1,18 @@
 package dk.shantech.newsviewer.ui.main
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import dk.shantech.newsviewer.BR
 import dk.shantech.newsviewer.data.model.Article
 import dk.shantech.newsviewer.databinding.ItemMainBinding
 
-class MainRecyclerViewAdaptor() : ListAdapter<Article, MainRecyclerViewAdaptor.MainViewHolder> (ArticleDiffCallback()) {
+class MainRecyclerViewAdaptor(val onArticleClick: (article: Article) -> Unit) : ListAdapter<Article, MainRecyclerViewAdaptor.MainViewHolder> (ArticleDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -18,13 +22,15 @@ class MainRecyclerViewAdaptor() : ListAdapter<Article, MainRecyclerViewAdaptor.M
 
     inner class MainViewHolder(private val binding: ItemMainBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(viewModel: MainItemViewModel) {
-            binding.viewModel = viewModel
+            binding.setVariable(BR.viewModel, viewModel)
+            binding.executePendingBindings()
         }
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = getItem(position)
-//        holder.bind(item)
+        Log.d("Here", "onBindViewHolder: $item")
+        holder.bind(MainItemViewModel(item, onArticleClick))
     }
 
     class ArticleDiffCallback : DiffUtil.ItemCallback<Article>() {
@@ -36,5 +42,4 @@ class MainRecyclerViewAdaptor() : ListAdapter<Article, MainRecyclerViewAdaptor.M
             return oldItem == newItem
         }
     }
-
 }
